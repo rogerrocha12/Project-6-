@@ -154,3 +154,20 @@ body {
     transform: translate(-50%, -50%) scale(0);
     /* Temporarily add the class caught to the div class="insect" to test */
   }
+
+  #play-again-btn {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    padding: 20px 30px;
+    font-size: 18px;
+    display: none; /* hidden by default */
+    background-color: #fff;
+    color: #516dff;
+    border: none;
+    cursor: pointer;
+    font-family: 'Press Start 2P', sans-serif;
+  }
+  
