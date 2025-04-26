@@ -1,5 +1,3 @@
- 
-
 const screens = document.querySelectorAll('.screen');
 const chooseInsectBtns = document.querySelectorAll('.choose-insect-btn');
 const startBtn = document.getElementById('start-btn');
@@ -7,10 +5,15 @@ const gameContainer = document.getElementById('game-container');
 const timeEl = document.getElementById('time');
 const scoreEl = document.getElementById('score');
 const message = document.getElementById('message');
+const playAgainBtn = document.getElementById('play-again-btn');
 
+let gameEnded = false;
 let seconds = 0;
 let score = 0;
 let selectedInsect = {};
+let timeLeft = 20;
+let countdownInterval;
+
 
 startBtn.addEventListener('click', () => screens[0].classList.add('up'));
 
@@ -27,17 +30,40 @@ chooseInsectBtns.forEach(btn => {
 });
 
 function startGame() {
-    setInterval(increaseTime, 1000);
+    updateTimeDisplay(); // Show initial time
+    countdownInterval = setInterval(decreaseTime, 1000);
 }
 
-function increaseTime() {
-    let m = Math.floor(seconds / 60);
-    let s = seconds % 60;
+function endGame() {
+    if (gameEnded) return; // prevent it from running again
+    gameEnded = true;
+
+    alert(`Game Over! Your score is: ${score}`);
+    playAgainBtn.style.display = 'block';
+}
+
+
+
+function decreaseTime() {
+    timeLeft--;
+    updateTimeDisplay();
+
+    if (timeLeft <= 0) {
+        clearInterval(countdownInterval); // Just in case
+        endGame(); // End the game
+    }
+}
+
+function updateTimeDisplay() {
+    let m = Math.floor(timeLeft / 60);
+    let s = timeLeft % 60;
     m = m < 10 ? `0${m}` : m;
     s = s < 10 ? `0${s}` : s;
     timeEl.innerHTML = `Time: ${m}:${s}`;
     seconds++;
+
 }
+
 
 function createInsect() {
     const insect = document.createElement('div');
@@ -74,9 +100,27 @@ function addInsects() {
 
 function increaseScore() {
     score++;
-
-    if (score > 19) {
-        message.classList.add('visible');
-    }
+ 
     scoreEl.innerHTML = `Score: ${score}`;
 }
+
+
+playAgainBtn.addEventListener('click', () => {
+    // Reset everything
+    gameEnded = false;
+    score = 0;
+    timeLeft = 20;
+    scoreEl.innerHTML = `Score: ${score}`;
+    message.classList.remove('visible');
+    playAgainBtn.style.display = 'none';
+
+    // Remove all insects
+    document.querySelectorAll('.insect').forEach(insect => insect.remove());
+
+    // Restart the game
+    updateTimeDisplay();
+    countdownInterval = setInterval(decreaseTime, 1000);
+    setTimeout(endGame, 20000);
+    setTimeout(createInsect, 1000);
+});
+ 
